@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapeutic AI App Scraper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc;
+            color: #4f5d73;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #2a3d66;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 40px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            color: #555;
+        }
+
+        input[type="text"], input[type="radio"], select {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .radio-container {
+            margin-bottom: 20px;
+        }
+
+        .radio-container input {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .radio-container label {
+            display: inline-block;
+            font-size: 1rem;
+            color: #555;
+            margin-right: 20px;
+        }
+
+        button {
+            background-color: #3f5d7e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2a3d66;
+        }
+
+        footer {
+            background-color: #2a3d66;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Add responsiveness */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            .container {
+                padding: 20px;
+            }
+            label, button {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Web for Therapeutic AI Apps</h1>
+    </header>
+    
+    <div class="container">
+        <form action="/search" method="POST">
+            <label for="keyword">Enter keyword:</label>
+            <input type="text" id="keyword" name="keyword" required placeholder="e.g. therapy, mental health">
+            
+            <label>Select platform:</label>
+            <div class="radio-container">
+                <input type="radio" id="google_play" name="platform" value="google_play" required>
+                <label for="google_play">Google Play</label>
+                
+                <input type="radio" id="app_store" name="platform" value="app_store" required>
+                <label for="app_store">App Store</label>
+            </div>
+
+            <label>Select device:</label>
+            <div class="radio-container">
+                <input type="radio" id="mobile" name="device_type" value="mobile" required>
+                <label for="mobile">Mobile</label>
+                
+                <input type="radio" id="desktop" name="device_type" value="desktop" required>
+                <label for="desktop">Desktop</label>
+            </div>
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Therapeutic AI Scraper. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapeutic AI App Scraper</title>
+    <style>
+        /* Reset default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fc;
+            color: #4f5d73;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #2a3d66;
+            color: #fff;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        header h1 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed; /* Ensures fixed column widths */
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+            word-wrap: break-word;
+        }
+
+        th {
+            background-color: #3f5d7e;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+        }
+
+        td {
+            background-color: #f9fafb;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f4f6fb;
+        }
+
+        tr:hover td {
+            background-color: #e2e8f0;
+        }
+
+        /* Adjust column widths */
+        th, td { width: 10%; } /* Default column width */
+        .description-column {
+            width: 30%; /* Make the description column 3x wider */
+            min-width: 300px;
+        }
+
+        .extra-column {
+            display: none;
+        }
+
+        button {
+            background-color: #3f5d7e;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 20px; /* Rounded shape */
+            transition: background-color 0.3s ease;
+        }
+
+        .view-more-btn {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border-radius: 50%; /* Fully circular */
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .view-more-btn:hover {
+            background-color: #2a3d66;
+        }
+
+        .read-more-btn {
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 20px;
+            text-align: center;
+            background-color: #3f5d7e;
+            color: white;
+        }
+
+        button:hover, .btn-back:hover {
+            background-color: #2a3d66;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Results for Therapeutic AI Apps</h1>
+        <p>Explore the top therapeutic apps available across platforms</p>
+    </header>
+
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="description-column">Description</th>
+                    <th>Category</th>
+                    <th>Developer</th>
+                    <th>Age</th>
+                    <th>Pricing</th>
+                    <th>Country</th>
+                    <th>Platform</th>
+                    <th>Type</th>
+                    <th class="extra-column">Release</th>
+                    <th class="extra-column">Rating</th>
+                    <th class="extra-column">URL</th>
+                    <th style="width: 40px; text-align: center;">
+                        <button class="view-more-btn" onclick="toggleExtraColumns()">+</button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in apps %}
+                <tr>
+                    <td>{{ app.Name }}</td>
+                    <td class="description-column">
+                        {% if app.Description %}
+                            <div class="description-content" id="content-{{ loop.index }}">
+                                {% set char_limit = 150 %}
+                                {% if app.Description|length > char_limit %}
+                                    <span id="short-{{ loop.index }}">{{ app.Description[:char_limit]|replace("\n", "<br>")|safe }}...</span>
+                                    <span id="more-{{ loop.index }}" style="display: none;">{{ app.Description|replace("\n", "<br>")|safe }}</span>
+                                    <button class="read-more-btn" onclick="toggleDescription('{{ loop.index }}')">Read More</button>
+                                {% else %}
+                                    {{ app.Description|replace("\n", "<br>")|safe }}
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            No description available
+                        {% endif %}
+                    </td>
+                    <td>{{ app.Category }}</td>
+                    <td>{{ app.Developer }}</td>
+                    <td>{{ app['Age Limit'] }}</td>
+                    <td>{{ app['Price Model'] }}</td>
+                    <td>{{ app.Country }}</td>
+                    <td>{{ app.Platform }}</td>
+                    <td>{{ app.Type }}</td>
+                    <td class="extra-column">{{ app['Release Date'] }}</td>
+                    <td class="extra-column">{{ app.Rating }}</td>
+                    <td class="extra-column"><a href="{{ app.URL }}" target="_blank" style="color: #2a3d66; text-decoration: none;">View</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="/" class="btn-back">Back to Search</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Therapeutic AI Scraper in collaboration with PhD studies. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleDescription(index) {
+            var shortText = document.getElementById('short-' + index);
+            var moreText = document.getElementById('more-' + index);
+            var btn = moreText.nextElementSibling;
+    
+            if (moreText.style.display === "none" || moreText.style.display === "") {
+                shortText.style.display = "none";
+                moreText.style.display = "inline";
+                btn.textContent = "Read Less";
+            } else {
+                shortText.style.display = "inline";
+                moreText.style.display = "none";
+                btn.textContent = "Read More";
+            }
+        }
+
+        function toggleExtraColumns() {
+            var extraColumns = document.querySelectorAll('.extra-column');
+            var button = document.querySelector('.view-more-btn');
+
+            extraColumns.forEach(col => {
+                col.style.display = col.style.display === "none" ? "table-cell" : "none";
+            });
+
+            button.textContent = button.textContent === "+" ? "-" : "+";
+        }
+    </script>
+</body>
+</html>
