@@ -1,5 +1,5 @@
 import requests
-from google_play_scraper import apps 
+from google_play_scraper import search, app
 import pandas as pd
 from google_play_scraper.exceptions import ExtraHTTPError
 
@@ -29,18 +29,23 @@ def scrape_google_play(keyword, max_results=500, country="US"):
         if not keyword:
             raise ValueError("Keyword cannot be empty")
         
-        # Scraping in batches
+        # Scraping in batches with pagination
         while len(all_results) < max_results:
-            # Use the `apps()` method directly to get app details
-            results = apps(keyword, lang="en", country=country, num=max_results)  # Fetch apps using keyword
-            if not results:
-                break
+            results = search(keyword, lang="en", country=country, num_results=batch_size, start=start)
             
+            if not results:
+                print("No more results found.")
+                break  # Exit if no results are returned
+
             all_results.extend(results)
-            start += batch_size  
+            start += batch_size  # Move to the next set of results
+            
+            # Print out the current progress
+            print(f"Found {len(all_results)} results so far.")
             
             if len(results) < batch_size:
-                break  
+                print("Less than batch size results, ending scrape.")
+                break  # Exit if the batch is smaller than the defined batch size
 
     except ExtraHTTPError as e:
         print(f"Error occurred while scraping Google Play: {str(e)}")
@@ -53,10 +58,10 @@ def scrape_google_play(keyword, max_results=500, country="US"):
     for app_info in all_results[:max_results]:
         app_id = app_info["appId"]
         try:
-            details = apps(app_id, lang="en", country=country)  # Use apps() to fetch detailed app data
+            details = app(app_id, lang="en", country=country)
         except ExtraHTTPError as e:
             print(f"Error fetching details for app {app_id}: {str(e)}")
-            continue  
+            continue  # Skip this app if we fail to fetch its details
         
         # Get price model
         price_model = get_google_play_price_model(details)
@@ -166,7 +171,7 @@ def scrape_app_store(keyword, max_results=500, country="US"):
         
         except KeyError as e:
             print(f"Error processing app: {e}")
-            continue  
+            continue  # Skip this app if we encounter a KeyError
 
     return apps_data
 
@@ -181,22 +186,19 @@ app_store_apps = scrape_app_store(keyword, max_results=500)
 # Combine both datasets
 df_combined = pd.DataFrame(google_play_apps + app_store_apps)
 
-# Sort the combined DataFrame alphabetically by 'Name'
-df_combined_sorted = df_combined.sort_values(by="Name", ascending=True)
+# Save to CSV 
+df_combined.to_csv("therapeutic_ai_apps_combined.csv", index=False)
 
-# Save to CSV (sorted)
-df_combined_sorted.to_csv("therapeutic_ai_apps_combined_sorted.csv", index=False)
+print("✅ Both Google Play and App Store data saved successfully!")
 
-print("✅ Both Google Play and App Store data saved successfully (sorted by name)!")
-
-# Analyzing the Data    -->  Load the sorted combined CSV file
-df_combined_sorted = pd.read_csv("therapeutic_ai_apps_combined_sorted.csv")
+# Analyzing the Data    -->  Load the combined CSV file
+df_combined = pd.read_csv("therapeutic_ai_apps_combined.csv")
 
 # Distribution of Ratings
-rating_distribution = df_combined_sorted['Rating'].value_counts()
+rating_distribution = df_combined['Rating'].value_counts()
 
 # Count of Apps by Category
-category_distribution = df_combined_sorted['Category'].value_counts()
+category_distribution = df_combined['Category'].value_counts()
 
 # Display the analysis
 print("\n✅ Rating distribution:")
