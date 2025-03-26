@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
 import requests
-from google_play_scraper import app as google_play_app
+from google_play_scraper import search, app as google_play_app
 from google_play_scraper.exceptions import ExtraHTTPError
 
 app = Flask(__name__)
