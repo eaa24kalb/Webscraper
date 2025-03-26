@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
 import requests
-from google_play_scraper import search, app as google_play_app
+from google_play_scraper import apps, app as google_play_app
 from google_play_scraper.exceptions import ExtraHTTPError
 
 app = Flask(__name__)
@@ -29,18 +29,18 @@ def scrape_google_play(keyword, max_results=500, country="US", device_type="mobi
 
     all_results = []
     try:
-        results = search(keyword, lang="en", country=country)
-        all_results.extend(results[:max_results])
+        results = apps(keyword, lang="en", country=country, num=max_results)  # Correct function for search
+        all_results.extend(results)
 
         apps_data = []
         for app_info in all_results:
             app_id = app_info["appId"]
             try:
-                details = google_play_app(app_id) 
+                details = google_play_app(app_id)  # Fetch detailed app info using appId
             except ExtraHTTPError as e:
                 print(f"Error fetching details for app {app_id}: {e}")
                 continue  # Skip if there's an error fetching details for this app
-            
+
             price_model = get_google_play_price_model(details)
             app_type = "Mobile"
 
@@ -76,12 +76,11 @@ def scrape_google_play(keyword, max_results=500, country="US", device_type="mobi
                 "Platform": "Google Play",
                 "Type": app_type
             })
-        
+
         return apps_data
     except ExtraHTTPError as e:
         print(f"Error occurred while scraping Google Play: {e}")
         return []
-
 
 # App Store Scraping Function with error handling
 def scrape_app_store(keyword, max_results=500, country="US", device_type="mobile"):

@@ -1,5 +1,5 @@
 import requests
-from google_play_scraper import apps  # Updated to use `apps` instead of `search`
+from google_play_scraper import apps 
 import pandas as pd
 from google_play_scraper.exceptions import ExtraHTTPError
 
