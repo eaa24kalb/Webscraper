@@ -1,5 +1,5 @@
 import requests
-from google_play_scraper import search, app
+from google_play_scraper import apps  # Updated to use `apps` instead of `search`
 import pandas as pd
 from google_play_scraper.exceptions import ExtraHTTPError
 
@@ -31,7 +31,8 @@ def scrape_google_play(keyword, max_results=500, country="US"):
         
         # Scraping in batches
         while len(all_results) < max_results:
-            results = search(keyword, lang="en", country=country)
+            # Use the `apps()` method directly to get app details
+            results = apps(keyword, lang="en", country=country, num=max_results)  # Fetch apps using keyword
             if not results:
                 break
             
@@ -52,7 +53,7 @@ def scrape_google_play(keyword, max_results=500, country="US"):
     for app_info in all_results[:max_results]:
         app_id = app_info["appId"]
         try:
-            details = app(app_id, lang="en", country=country)
+            details = apps(app_id, lang="en", country=country)  # Use apps() to fetch detailed app data
         except ExtraHTTPError as e:
             print(f"Error fetching details for app {app_id}: {str(e)}")
             continue  
